@@ -77,7 +77,10 @@ export const validateUsername = async (req, res, next) => {
 
 export const userExist = async (req, res, next) => {
   try {
-    const user = await findUserByUsername(req.params.username)
+    const username = req.params.username
+      ? req.params.username
+      : req.body.username
+    const user = await findUserByUsername(username)
     if (!user) {
       return handleResponse(
         res,

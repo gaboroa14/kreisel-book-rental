@@ -2,6 +2,7 @@ import { check, validationResult } from 'express-validator'
 import { message } from '@config/message'
 import { handleError, handleResponse } from '@middleware/errorHandlers'
 import { findBookCategoryById } from '../dao'
+import { countBooksByCategory } from '@components/book/dao'
 
 const message_request = message.empty
 const message_request2 = message.invalid
@@ -34,7 +35,7 @@ export const bookCategoryExist = async (req, res, next) => {
   try {
     const id = req.params.id ? req.params.id : req.body.categoryId
     const bookCategory = await findBookCategoryById(id)
-    if (!bookCategory) {
+    if (!bookCategory || !bookCategory.status) {
       return handleResponse(
         res,
         400,
@@ -51,7 +52,15 @@ export const bookCategoryExist = async (req, res, next) => {
 
 export const bookCategoryEmpty = async (req, res, next) => {
   try {
-    //TO-DO: Finish this after coding books
+    const books = await countBooksByCategory(req.params.id)
+    if (books != 0) {
+      return handleResponse(
+        res,
+        400,
+        'No puedes eliminar una categoría de libros con libros registrados',
+        'No puedes eliminar una categoría de libros con libros registrados'
+      )
+    }
     next()
   } catch (error) {
     return handleError(error, res)

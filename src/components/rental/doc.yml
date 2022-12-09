@@ -1,0 +1,253 @@
+definitions:
+  Rental:
+    type: 'object'
+    required:
+      - 'username'
+      - 'bookId'
+      - 'endDate'
+      - 'quantity'
+    properties:
+      username:
+        type: string
+        example: 'johndoe3'
+      bookId:
+        type: number
+        example: 1
+      endDate:
+        type: date
+        example: '01-01-2022'
+      quantity:
+        type: number
+        example: 2
+
+  RentalResource:
+    type: 'object'
+    properties:
+      id:
+        type: number
+        example: 1
+      username:
+        type: string
+        example: 'johndoe3'
+      bookId:
+        type: number
+        example: 1
+      startDate:
+        type: date
+        example: '01-01-2022'
+      endDate:
+        type: date
+        example: '01-01-2022'
+      quantity:
+        type: number
+        example: 3
+      fare:
+        type: number
+        example: 2.5
+      cost:
+        type: number
+        example: 7.5
+      status:
+        type: string
+        example: 'Activo'
+
+/v1/rental:
+  get:
+    tags:
+      - 'Rental'
+    summary: 'Consulta todos los alquileres'
+    description: 'Permite realizar request al backend para obtener todos los alquileres de libros. Permite también realizar el filtrado por fecha de inicio o fecha de fin. Retorna listado paginado.'
+    produces:
+      - 'application/json'
+    parameters:
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Texto para buscar por fecha de inicio o de fin.
+      - in: query
+        name: page
+        schema:
+          type: number
+        description: número de página a paginar
+      - in: query
+        name: size
+        schema:
+          type: number
+        description: elementos por página a paginar
+      - in: query
+        name: status
+        schema:
+          type: boolean
+          example: true
+        description: Estatus de la categoría del libro
+    responses:
+      '200':
+        description: 'Successful operation'
+        schema:
+          example: 'json'
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden long'
+
+      '500':
+        description: 'SERVER ERROR'
+
+  post:
+    tags:
+      - 'Rental'
+    summary: 'Registro de un alquiler'
+    description: 'Permite crear un alquiler.'
+    consumes:
+      - application/json
+    produces:
+      - 'application/json'
+    parameters:
+      - in: body
+        name: body
+        description: Formulario para crear un nuevo alquiler de libros.
+        schema:
+          $ref: '#/definitions/Rental'
+    responses:
+      '200':
+        description: 'Operación exitosa'
+        schema:
+          type: 'object'
+          properties:
+            message:
+              type: 'string'
+            data:
+              $ref: '#/definitions/RentalResource'
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden'
+
+      '422':
+        description: 'Validation exception'
+
+      '500':
+        description: 'SERVER ERROR'
+
+/v1/rental/book/{bookId}:
+  get:
+    tags:
+      - 'Rental'
+    summary: 'Consulta todos los alquileres por libro'
+    description: 'Permite realizar request al backend para obtener todos los alquileres de un libro.'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: bookId
+        in: path
+        description: ID del libro a consultar.
+        required: true
+        example: 1
+        schema:
+          type: number
+          example: 1
+    responses:
+      '200':
+        description: 'Successful operation'
+        schema:
+          example: 'json'
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden long'
+
+      '500':
+        description: 'SERVER ERROR'
+
+/v1/rental/user/{username}:
+  get:
+    tags:
+      - 'Rental'
+    summary: 'Consulta todos los alquileres por un usuario en particular'
+    description: 'Permite realizar request al backend para obtener todos los alquileres de un usuario.'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: username
+        in: path
+        description: Nombre del usuario a consultar.
+        required: true
+        example: 'johndoe2'
+        schema:
+          type: string
+          example: 'johndoe2'
+    responses:
+      '200':
+        description: 'Successful operation'
+        schema:
+          example: 'json'
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden long'
+
+      '500':
+        description: 'SERVER ERROR'
+
+/v1/rental/{id}:
+  get:
+    tags:
+      - 'Rental'
+    summary: 'Consultar un alquiler de libros'
+    description: 'Consultar un alquiler de libros dado el ID de uno en particular.'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: id
+        in: path
+        description: ID del alquiler de libros a consultar.
+        required: true
+        example: 1
+        schema:
+          type: number
+          example: 1
+    responses:
+      '200':
+        description: 'Operación exitosa'
+        schema:
+          $ref: '#/definitions/RentalResource'
+      '400':
+        description: 'Access denied'
+      '403':
+        description: 'Forbidden'
+      '500':
+        description: 'SERVER ERROR'
+
+/v1/rental/finish/{id}:
+  delete:
+    tags:
+      - 'Rental'
+    summary: 'Cierra el alquiler del libro'
+    description: 'Permite dar por finalizado el alquiler del libro, devolviendo su existencia. Se necesita por path el id.'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: id
+        in: path
+        description: ID a finalizar.
+        required: true
+        example: 1
+        schema:
+          type: number
+          example: 1
+    responses:
+      '200':
+        description: 'Operación exitosa'
+        example: 'Operación exitosa'
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden'
+      '500':
+        description: 'SERVER ERROR'

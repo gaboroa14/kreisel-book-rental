@@ -1,5 +1,6 @@
 import { dataBook } from '@components/book/model'
 import { dataBookCategory } from '@components/bookCategory/model'
+import { dataRental } from '@components/rental/model'
 import { dataUser } from '@components/user/model'
 import { Sequelize } from 'sequelize'
 
@@ -43,11 +44,21 @@ const BookCategory = db.define('bookCategory', dataBookCategory)
 
 const Book = db.define('book', dataBook)
 
+const Rental = db.define('rental', dataRental)
+
 //Relationships between models
 
 BookCategory.hasMany(Book, { as: 'books' })
 
 Book.belongsTo(BookCategory, { foreignKey: 'categoryId', as: 'category' })
+
+Book.hasMany(Rental, { foreignKey: 'bookId', as: 'book' })
+
+User.hasMany(Rental, { foreignKey: 'username', as: 'user' })
+
+Rental.belongsTo(Book, { foreignKey: 'bookId' })
+
+Rental.belongsTo(User, { foreignKey: 'username' })
 
 //Synchronizing all models at once
 export const syncModels = async () => {
@@ -61,3 +72,4 @@ export const syncModels = async () => {
 export const UserModel = User
 export const BookCategoryModel = BookCategory
 export const BookModel = Book
+export const RentalModel = Rental

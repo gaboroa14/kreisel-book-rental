@@ -141,3 +141,29 @@ export const updateStatusBook = async (id, status) => {
     throw error
   }
 }
+
+export const updateBookReservations = async (id, reservationsDifference) => {
+  try {
+    const book = await BookModel.findByPk(id)
+    const reservations = book.reservations + reservationsDifference
+    return await BookModel.update(
+      { reservations },
+      { where: { id }, returning: true }
+    )
+  } catch (error) {
+    throw error
+  }
+}
+
+export const countBooksByCategory = async (categoryId) => {
+  try {
+    return await BookModel.count({
+      where: {
+        categoryId,
+        status: true
+      }
+    })
+  } catch (error) {
+    throw error
+  }
+}
