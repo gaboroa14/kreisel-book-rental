@@ -1,0 +1,231 @@
+definitions:
+  BookCategory:
+    type: 'object'
+    required:
+      - 'name'
+      - 'description'
+    properties:
+      name:
+        type: string
+        example: 'Fantasía'
+      description:
+        type: string
+        example: 'Libros de fantasía medieval a la El Señor de los Anillos'
+
+  BookCategoryResource:
+    type: 'object'
+    properties:
+      id:
+        type: number
+        example: 1
+      name:
+        type: string
+        example: 'Fantasía'
+      description:
+        type: string
+        example: 'Libros de fantasía como El Señor de los Anillos'
+      status:
+        type: 'boolean'
+        example: true
+
+/v1/bookCategory:
+  get:
+    tags:
+      - 'BookCategory'
+    summary: 'Consulta todas las categorías de libros'
+    description: 'Permite realizar request al backend para obtener todas las categorías de libros. Permite también realizar el filtrado por nombre o por descripción. Retorna listado paginado.'
+    produces:
+      - 'application/json'
+    parameters:
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Texto para buscar por nombre o descripción.
+      - in: query
+        name: page
+        schema:
+          type: number
+        description: número de página a paginar
+      - in: query
+        name: size
+        schema:
+          type: number
+        description: elementos por página a paginar
+      - in: query
+        name: status
+        schema:
+          type: boolean
+          example: true
+        description: Estatus de la categoría del libro
+    responses:
+      '200':
+        description: 'Successful operation'
+        schema:
+          example:
+            {
+              'message': 'Éxito realizando la operación',
+              'data':
+                {
+                  'totalItems': 2,
+                  'items':
+                    [
+                      {
+                        'id': 2,
+                        'name': 'Fantasía',
+                        'description': 'Libros de fantasía medieval a la El Señor de los Anillos',
+                        'status': true
+                      },
+                      {
+                        'id': 1,
+                        'name': 'Ciencia Ficción',
+                        'description': 'Libros de Ciencia Ficción',
+                        'status': true
+                      }
+                    ],
+                  'totalPages': null,
+                  'currentPage': 0
+                }
+            }
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden long'
+
+      '500':
+        description: 'SERVER ERROR'
+
+  post:
+    tags:
+      - 'BookCategory'
+    summary: 'Registro de una categoría de libros'
+    description: 'Permite crear una categoría de libros.'
+    consumes:
+      - application/json
+    produces:
+      - 'application/json'
+    parameters:
+      - in: body
+        name: body
+        description: Formulario para crear una nueva categoría de libros.
+        schema:
+          $ref: '#/definitions/BookCategory'
+    responses:
+      '200':
+        description: 'Operación exitosa'
+        schema:
+          type: 'object'
+          properties:
+            message:
+              type: 'string'
+            data:
+              $ref: '#/definitions/BookCategoryResource'
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden'
+
+      '422':
+        description: 'Validation exception'
+
+      '500':
+        description: 'SERVER ERROR'
+
+/v1/bookCategory/{id}:
+  get:
+    tags:
+      - 'BookCategory'
+    summary: 'Consultar una categoría de libros'
+    description: 'Consultar una categoría de libros dado el ID de una en particular.'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: id
+        in: path
+        description: ID de la categoría de libros a consultar.
+        required: true
+        example: 1
+        schema:
+          type: number
+          example: 1
+    responses:
+      '200':
+        description: 'Operación exitosa'
+        schema:
+          $ref: '#/definitions/BookCategoryResource'
+      '400':
+        description: 'Access denied'
+      '403':
+        description: 'Forbidden'
+      '500':
+        description: 'SERVER ERROR'
+
+  put:
+    tags:
+      - 'BookCategory'
+    summary: 'Actualizar una categoría de libros'
+    description: 'Permite actualizar los datos de una categoría de libros dada. Necesita indicar el ID como parámetro en ruta, y en el body, enviar los datos a actualizar.'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: id
+        in: path
+        description: ID de la categoría de libros a actualizar.
+        required: true
+        example: 1
+        schema:
+          type: number
+          example: 1
+      - in: body
+        name: body
+        description: 'Formulario para actualizar una categoría de libros.'
+        schema:
+          $ref: '#/definitions/BookCategory'
+    responses:
+      '200':
+        description: 'Successful operation'
+        schema:
+          $ref: '#/definitions/BookCategoryResource'
+      '400':
+        description: 'Access denied'
+      '403':
+        description: 'Forbidden'
+      '500':
+        description: 'SERVER ERROR'
+
+/v1/bookCategory/status/{id}:
+  delete:
+    tags:
+      - 'BookCategory'
+    summary: 'Actualiza el estatus de la categoría de libros'
+    description: 'Permite eliminar o reactivar una categoría de libros. Se necesita por path el id, y como parámetro del body el estatus que se desea definir.'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: id
+        in: path
+        description: ID a modificar.
+        required: true
+        example: 1
+        schema:
+          type: number
+          example: 1
+      - in: body
+        name: body
+        description: Formulario para actualizar el estatus de una categoría de libros.
+        schema:
+          example: { 'status': false }
+    responses:
+      '200':
+        description: 'Operación exitosa'
+        schema:
+          $ref: '#/definitions/BookCategoryResource'
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden'
+      '500':
+        description: 'SERVER ERROR'

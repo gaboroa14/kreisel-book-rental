@@ -1,0 +1,30 @@
+/v1/login:
+  post:
+    tags:
+      - Auth
+    description: Inicia la sesión para ingresar a la aplicación.
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        description: Datos de autenticación para inicio de sesión.
+        schema:
+          type: 'object'
+          properties:
+            username:
+              type: string
+              example: 'johndoe'
+              description: Nombre de usuario a iniciar sesión.
+            password:
+              type: string
+              example: 'abcABC123!@#'
+              description: Contraseña del usuario.
+    responses:
+      200:
+        description: Mensaje de éxito y token de usuario.
+        schema:
+      500:
+        description: SERVER ERROR

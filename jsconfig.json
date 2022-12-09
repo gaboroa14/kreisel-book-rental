@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@components/*": ["./components/*"],
+      "@config/*": ["./config/*"],
+      "@microservices/*": ["./microservices/*"],
+      "@middleware/*": ["./middleware/*"],
+      "@services/*": ["./services/*"],
+    }
+  },
+  "exclude": ["node_modules"]
+}

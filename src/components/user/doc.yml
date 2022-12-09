@@ -1,0 +1,244 @@
+definitions:
+  User:
+    type: 'object'
+    required:
+      - 'username'
+      - 'password'
+      - 'name'
+      - 'birthday'
+    properties:
+      username:
+        type: string
+        example: 'johndoe'
+      password:
+        type: string
+        example: 'abcABC123!@#'
+      name:
+        type: string
+        example: 'John Doe'
+      birthday:
+        type: string
+        example: 01-01-2000
+
+  UserResource:
+    type: 'object'
+    properties:
+      username:
+        type: string
+        example: 'johndoe'
+      name:
+        type: string
+        example: 'John Doe'
+      birthday:
+        type: string
+        example: 01-01-2000
+      userType:
+        type: string
+        example: 'C'
+      status:
+        type: 'boolean'
+        example: true
+
+/v1/user:
+  get:
+    tags:
+      - 'User'
+    summary: 'Consulta todos los usuarios'
+    description: 'Permite realizar request al backend para obtener todos los usuarios. Permite también realizar el filtrado por nombre de usuario o por nombre. Retorna listado paginado.'
+    produces:
+      - 'application/json'
+    parameters:
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Texto para buscar por nombre de usuario o nombre.
+      - in: query
+        name: page
+        schema:
+          type: number
+        description: número de página a paginar
+      - in: query
+        name: size
+        schema:
+          type: number
+        description: elementos por página a paginar
+      - in: query
+        name: status
+        schema:
+          type: boolean
+          example: true
+        description: Estatus del usuario
+    responses:
+      '200':
+        description: 'Successful operation'
+        schema:
+          example:
+            {
+              'message': 'Éxito realizando la operación',
+              'data':
+                {
+                  'totalItems': 2,
+                  'items':
+                    [
+                      {
+                        'username': 'johndoe',
+                        'name': 'John Doe',
+                        'birthday': '2000-01-01',
+                        'userType': 'Administrador',
+                        'status': 'Activo'
+                      },
+                      {
+                        'username': 'johndoe2',
+                        'name': 'John Dose',
+                        'birthday': '2010-01-01',
+                        'userType': 'Cliente',
+                        'status': 'Activo'
+                      }
+                    ],
+                  'totalPages': null,
+                  'currentPage': 0
+                }
+            }
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden long'
+
+      '500':
+        description: 'SERVER ERROR'
+
+  post:
+    tags:
+      - 'User'
+    summary: 'Registro de un usuario'
+    description: 'Permite crear un usuario. Únicamente permite la creación de usuarios de tipo cliente, dada la limitación del enunciado.'
+    consumes:
+      - application/json
+    produces:
+      - 'application/json'
+    parameters:
+      - in: body
+        name: body
+        description: Formulario para crear un nuevo usuario.
+        schema:
+          $ref: '#/definitions/User'
+    responses:
+      '200':
+        description: 'Operación exitosa'
+        schema:
+          type: 'object'
+          properties:
+            message:
+              type: 'string'
+            data:
+              $ref: '#/definitions/UserResource'
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden'
+
+      '422':
+        description: 'Validation exception'
+
+      '500':
+        description: 'SERVER ERROR'
+
+/v1/user/{username}:
+  get:
+    tags:
+      - 'User'
+    summary: 'Consultar un usuario'
+    description: 'Consultar un usuario dado un nombre de usuario en particular.'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: username
+        in: path
+        description: Nombre de usuario a consultar.
+        required: true
+        example: 'johndoe'
+        schema:
+          type: 'string'
+          example: 'johndoe'
+    responses:
+      '200':
+        description: 'Operación exitosa'
+        schema:
+          $ref: '#/definitions/UserResource'
+      '400':
+        description: 'Access denied'
+      '403':
+        description: 'Forbidden'
+      '500':
+        description: 'SERVER ERROR'
+
+  put:
+    tags:
+      - 'User'
+    summary: 'Actualizar un usuario'
+    description: 'Permite actualizar los datos de un usuario dado. Necesita indicar el usuario como parámetro en ruta, y en el body, enviar los datos a actualizar.'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: username
+        in: path
+        description: Nombre de usuario a actualizar.
+        required: true
+        example: 'johndoe'
+        schema:
+          type: 'string'
+          example: 'johndoe'
+      - in: body
+        name: body
+        description: 'Formulario para actualizar un usuario.'
+        schema:
+          $ref: '#/definitions/User'
+    responses:
+      '200':
+        description: 'Successful operation'
+        schema:
+          $ref: '#/definitions/UserResource'
+      '400':
+        description: 'Access denied'
+      '403':
+        description: 'Forbidden'
+      '500':
+        description: 'SERVER ERROR'
+
+/v1/user/status/{username}:
+  delete:
+    tags:
+      - 'User'
+    summary: 'Actualiza el estatus del usuario'
+    description: 'Permite eliminar o reactivar un usuario. Se necesita por path el nombre del usuario, y como parámetro del body el estatus que se desea definir.'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: username
+        in: path
+        description: Nombre del usuario a modificar.
+        required: true
+        example: 'johndoe'
+        schema:
+          type: 'string'
+          example: 'johndoe'
+      - in: body
+        name: body
+        description: Formulario para actualizar el estatus de un usuario.
+        schema:
+          example: { 'status': false }
+    responses:
+      '200':
+        description: 'Operación exitosa'
+        schema:
+          $ref: '#/definitions/UserResource'
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden'
+      '500':
+        description: 'SERVER ERROR'
