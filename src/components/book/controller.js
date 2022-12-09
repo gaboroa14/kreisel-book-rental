@@ -8,7 +8,8 @@ import {
   findBookById,
   updateBook,
   updateStatusBook,
-  findAvailableBooks
+  findAvailableBooks,
+  findAvailableBooksByCategory
 } from './dao'
 import { bookResource, listBooks } from './dto'
 import {
@@ -117,6 +118,22 @@ export const putStatusBook = async (req = request, res = response) => {
     const status = req.body.status
 
     const data = await updateStatusBook(id, status)
+
+    handleResponse(res, 200, message.success, data)
+  } catch (error) {
+    handleError(error, res)
+  }
+}
+
+export const getBooksByCategory = async (req = request, res = response) => {
+  try {
+    const { page, size, status } = getPaginationQuerys(req.query)
+    const categoryId = req.params.categoryId
+    const { limit, offset } = getPagination(page, size)
+    const result = listBooks(
+      await findAvailableBooksByCategory({ categoryId, limit, offset, status })
+    )
+    const data = getPagingData({ data: result, page, limit })
 
     handleResponse(res, 200, message.success, data)
   } catch (error) {

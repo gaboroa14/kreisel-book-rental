@@ -80,6 +80,31 @@ export const findAvailableBooks = async ({ search, limit, offset, status }) => {
   }
 }
 
+export const findAvailableBooksByCategory = async ({
+  categoryId,
+  limit,
+  offset,
+  status
+}) => {
+  try {
+    return await BookModel.findAll({
+      limit: limit,
+      offset: offset,
+      where: {
+        availability: { [Op.gt]: db.col('reservations') },
+        categoryId,
+        status
+      },
+      include: {
+        model: BookCategoryModel,
+        as: 'category'
+      }
+    })
+  } catch (error) {
+    throw error
+  }
+}
+
 export const findBookById = async (id) => {
   try {
     return await BookModel.findOne({

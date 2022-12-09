@@ -6,6 +6,7 @@ import {
   getAllAvailableBooks,
   getAllBooks,
   getBookById,
+  getBooksByCategory,
   putBook,
   putStatusBook,
   updateBookAvailability,
@@ -17,6 +18,7 @@ const router = Router()
 
 router.get('/', authLoggedUser, getAllBooks)
 router.get('/available', authLoggedUser, getAllAvailableBooks)
+router.get('/category/:categoryId', authLoggedUser, getBooksByCategory)
 router.post('/', [authUserAdmin, bookRequest, bookCategoryExist], createBook)
 router.get('/:id', [authLoggedUser, bookExist], getBookById)
 router.put('/:id', [authUserAdmin, bookExist], putBook)

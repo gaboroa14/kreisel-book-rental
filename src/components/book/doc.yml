@@ -133,6 +133,48 @@ definitions:
       '500':
         description: 'SERVER ERROR'
 
+/v1/book/category/{categoryId}:
+  get:
+    tags:
+      - 'Book'
+    summary: 'Consulta todos los libros disponibles para alquiler de una categoría en específico'
+    description: 'Permite realizar request al backend para obtener todos los libros que estén disponibles para alquiler de una categoría en específico. Retorna listado paginado.'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: categoryId
+        in: path
+        description: ID de la categoría de libros a consultar.
+        required: true
+        example: 1
+        schema:
+          type: number
+          example: 1
+      - in: query
+        name: size
+        schema:
+          type: number
+        description: elementos por página a paginar
+      - in: query
+        name: status
+        schema:
+          type: boolean
+          example: true
+        description: Estatus de la categoría del libro
+    responses:
+      '200':
+        description: 'Successful operation'
+        schema:
+          example: 'json'
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden long'
+
+      '500':
+        description: 'SERVER ERROR'
+
 /v1/book/available:
   get:
     tags:
