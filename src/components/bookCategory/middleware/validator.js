@@ -32,7 +32,8 @@ export const bookCategoryRequest = async (req, res, next) => {
 
 export const bookCategoryExist = async (req, res, next) => {
   try {
-    const bookCategory = await findBookCategoryById(req.params.id)
+    const id = req.params.id ? req.params.id : req.body.categoryId
+    const bookCategory = await findBookCategoryById(id)
     if (!bookCategory) {
       return handleResponse(
         res,

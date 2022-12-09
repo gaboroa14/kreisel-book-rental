@@ -1,0 +1,338 @@
+definitions:
+  Book:
+    type: 'object'
+    required:
+      - 'name'
+      - 'authorName'
+      - 'categoryId'
+      - 'availability'
+      - 'fare'
+    properties:
+      name:
+        type: string
+        example: '2001: Una Odisea en el Espacio'
+      authorName:
+        type: string
+        example: 'Arthur C. Clarke'
+      categoryId:
+        type: number
+        example: 1
+      availability:
+        type: number
+        example: 6
+      fare:
+        type: number
+        example: 2.5
+
+  BookResource:
+    type: 'object'
+    properties:
+      id:
+        type: number
+        example: 1
+      name:
+        type: string
+        example: '2001: Una Odisea en el Espacio'
+      authorName:
+        type: string
+        example: 'Arthur C. Clarke'
+      categoryId:
+        type: number
+        example: 1
+      availability:
+        type: number
+        example: 6
+      reservations:
+        type: number
+        example: 2
+      fare:
+        type: number
+        example: 2.5
+      status:
+        type: 'boolean'
+        example: true
+
+/v1/book:
+  get:
+    tags:
+      - 'Book'
+    summary: 'Consulta todos los libros'
+    description: 'Permite realizar request al backend para obtener todos los libros. Permite también realizar el filtrado por nombre o por nombre del autor. Retorna listado paginado.'
+    produces:
+      - 'application/json'
+    parameters:
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Texto para buscar por nombre o nombre del autor.
+      - in: query
+        name: page
+        schema:
+          type: number
+        description: número de página a paginar
+      - in: query
+        name: size
+        schema:
+          type: number
+        description: elementos por página a paginar
+      - in: query
+        name: status
+        schema:
+          type: boolean
+          example: true
+        description: Estatus de la categoría del libro
+    responses:
+      '200':
+        description: 'Successful operation'
+        schema:
+          example: 'json'
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden long'
+
+      '500':
+        description: 'SERVER ERROR'
+
+  post:
+    tags:
+      - 'Book'
+    summary: 'Registro de un libro'
+    description: 'Permite crear un libro.'
+    consumes:
+      - application/json
+    produces:
+      - 'application/json'
+    parameters:
+      - in: body
+        name: body
+        description: Formulario para crear un nuevo libro.
+        schema:
+          $ref: '#/definitions/Book'
+    responses:
+      '200':
+        description: 'Operación exitosa'
+        schema:
+          type: 'object'
+          properties:
+            message:
+              type: 'string'
+            data:
+              $ref: '#/definitions/BookResource'
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden'
+
+      '422':
+        description: 'Validation exception'
+
+      '500':
+        description: 'SERVER ERROR'
+
+/v1/book/available:
+  get:
+    tags:
+      - 'Book'
+    summary: 'Consulta todos los libros disponibles para alquiler'
+    description: 'Permite realizar request al backend para obtener todos los libros que estén disponibles para alquiler. Retorna listado paginado.'
+    produces:
+      - 'application/json'
+    parameters:
+      - in: query
+        name: page
+        schema:
+          type: number
+        description: número de página a paginar
+      - in: query
+        name: size
+        schema:
+          type: number
+        description: elementos por página a paginar
+      - in: query
+        name: status
+        schema:
+          type: boolean
+          example: true
+        description: Estatus de la categoría del libro
+    responses:
+      '200':
+        description: 'Successful operation'
+        schema:
+          example: 'json'
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden long'
+
+      '500':
+        description: 'SERVER ERROR'
+
+/v1/book/{id}:
+  get:
+    tags:
+      - 'Book'
+    summary: 'Consultar un libro'
+    description: 'Consultar un libro dado el ID de uno en particular.'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: id
+        in: path
+        description: ID del libro a consultar.
+        required: true
+        example: 1
+        schema:
+          type: number
+          example: 1
+    responses:
+      '200':
+        description: 'Operación exitosa'
+        schema:
+          $ref: '#/definitions/BookResource'
+      '400':
+        description: 'Access denied'
+      '403':
+        description: 'Forbidden'
+      '500':
+        description: 'SERVER ERROR'
+
+  put:
+    tags:
+      - 'Book'
+    summary: 'Actualizar un libro'
+    description: 'Permite actualizar los datos de un libro dado. Necesita indicar el ID como parámetro en ruta, y en el body, enviar los datos a actualizar.'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: id
+        in: path
+        description: ID del libro a actualizar.
+        required: true
+        example: 1
+        schema:
+          type: number
+          example: 1
+      - in: body
+        name: body
+        description: 'Formulario para actualizar un libro.'
+        schema:
+          $ref: '#/definitions/Book'
+    responses:
+      '200':
+        description: 'Successful operation'
+        schema:
+          $ref: '#/definitions/BookResource'
+      '400':
+        description: 'Access denied'
+      '403':
+        description: 'Forbidden'
+      '500':
+        description: 'SERVER ERROR'
+
+/v1/book/status/{id}:
+  delete:
+    tags:
+      - 'Book'
+    summary: 'Actualiza el estatus del libro'
+    description: 'Permite eliminar o reactivar un libro. Se necesita por path el id, y como parámetro del body el estatus que se desea definir.'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: id
+        in: path
+        description: ID a modificar.
+        required: true
+        example: 1
+        schema:
+          type: number
+          example: 1
+      - in: body
+        name: body
+        description: Formulario para actualizar el estatus de un libro.
+        schema:
+          example: { 'status': false }
+    responses:
+      '200':
+        description: 'Operación exitosa'
+        schema:
+          $ref: '#/definitions/BookResource'
+      '400':
+        description: 'Access denied'
+
+      '403':
+        description: 'Forbidden'
+      '500':
+        description: 'SERVER ERROR'
+
+/v1/book/availability/{id}:
+  patch:
+    tags:
+      - 'Book'
+    summary: 'Actualiza el inventario actual de un libro en específico'
+    description: 'Modifica la disponibilidad actual de un libro en específico, pudiendo modificarla según sea conveniente'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: id
+        in: path
+        description: ID a actualizar.
+        required: true
+        example: 1
+        schema:
+          type: number
+          example: 1
+      - in: body
+        name: body
+        description: Formulario para actualizar la disponibilidad de un libro.
+        schema:
+          example: { 'availability': 17 }
+    responses:
+      '200':
+        description: 'Operación exitosa'
+        schema:
+          $ref: '#/definitions/BookResource'
+      '400':
+        description: 'Access denied'
+      '403':
+        description: 'Forbidden'
+      '500':
+        description: 'SERVER ERROR'
+
+/v1/book/fare/{id}:
+  patch:
+    tags:
+      - 'Book'
+    summary: 'Actualiza el precio actual de un libro en específico'
+    description: 'Modifica el precio de alquiler actual de un libro en específico, pudiendo modificarlo según sea conveniente'
+    produces:
+      - 'application/json'
+    parameters:
+      - name: id
+        in: path
+        description: ID a actualizar.
+        required: true
+        example: 1
+        schema:
+          type: number
+          example: 1
+      - in: body
+        name: body
+        description: Formulario para actualizar el precio de alquiler de un libro.
+        schema:
+          example: { 'fare': 6 }
+    responses:
+      '200':
+        description: 'Operación exitosa'
+        schema:
+          $ref: '#/definitions/BookResource'
+      '400':
+        description: 'Access denied'
+      '403':
+        description: 'Forbidden'
+      '500':
+        description: 'SERVER ERROR'

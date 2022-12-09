@@ -34,8 +34,8 @@ server.listen(app.get('port'), async () => {
     await db.authenticate()
     console.log('database connected')
 
-    await db.sync()
-    await syncModels()
+    //await db.sync()
+    //await syncModels()
     console.log('All models were synchronized successfully.')
   } catch (error) {
     console.log(error)

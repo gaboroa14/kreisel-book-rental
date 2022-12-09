@@ -1,3 +1,4 @@
+import { dataBook } from '@components/book/model'
 import { dataBookCategory } from '@components/bookCategory/model'
 import { dataUser } from '@components/user/model'
 import { Sequelize } from 'sequelize'
@@ -40,11 +41,13 @@ const User = db.define('user', dataUser)
 
 const BookCategory = db.define('bookCategory', dataBookCategory)
 
+const Book = db.define('book', dataBook)
+
 //Relationships between models
 
-//User.hasMany(Client, { as: 'clients' })
+BookCategory.hasMany(Book, { as: 'books' })
 
-//Client.belongsTo(User, { foreignKey: 'userIdNumber', as: 'user' })
+Book.belongsTo(BookCategory, { foreignKey: 'categoryId', as: 'category' })
 
 //Synchronizing all models at once
 export const syncModels = async () => {
@@ -57,3 +60,4 @@ export const syncModels = async () => {
 
 export const UserModel = User
 export const BookCategoryModel = BookCategory
+export const BookModel = Book
